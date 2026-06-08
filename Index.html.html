@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>IT Training Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --peach: #FDEBD0; --peach-mid: #F0A07A; --peach-dark: #C86B3A;
+  --mint: #D6F5E3; --mint-mid: #5DC99A; --mint-dark: #1E7A50;
+  --sky: #D6EDFB; --sky-mid: #5BAEE0; --sky-dark: #1A5F8A;
+  --lavender: #EDE8FB; --lavender-mid: #9B7FDE; --lavender-dark: #4A2FA0;
+  --rose: #FBE8EE; --rose-mid: #E87BA8; --rose-dark: #A03060;
+  --lemon: #FBF6D6; --lemon-mid: #D4B840; --lemon-dark: #7A6010;
+  --ink: #2D2D3A; --ink-soft: #4A4A60; --muted: #8A8AA8;
+  --border: rgba(0,0,0,0.08); --bg: #F8F7FF; --white: #FFFFFF;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+  --r: 14px; --r-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+/* NAV */
+nav { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 0; position: sticky; top: 0; z-index: 100; }
+.nav-logo { font-family: var(--serif); font-size: 18px; color: var(--ink); padding: 16px 0; margin-right: 24px; flex-shrink: 0; }
+.nav-logo span { color: var(--lavender-dark); font-style: italic; }
+.nav-tabs { display: flex; gap: 0; flex: 1; overflow-x: auto; }
+.nav-tab { padding: 16px 16px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; background: none; border-left: none; border-right: none; border-top: none; }
+.nav-tab:hover { color: var(--ink); }
+.nav-tab.active { color: var(--lavender-dark); border-bottom-color: var(--lavender-dark); }
+.nav-user { display: flex; align-items: center; gap: 10px; margin-left: auto; padding-left: 16px; flex-shrink: 0; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--lavender); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--lavender-dark); cursor: pointer; border: none; }
+.user-name-display { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+
+/* PAGES */
+.page { display: none; padding: 28px 24px; max-width: 900px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* SETUP */
+.setup-card { background: var(--white); border-radius: 20px; border: 1px solid var(--border); padding: 40px; max-width: 500px; margin: 40px auto; text-align: center; }
+.setup-card h2 { font-family: var(--serif); font-size: 28px; margin-bottom: 8px; }
+.setup-card p { color: var(--muted); font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+.setup-input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--r-sm); font-family: var(--sans); font-size: 15px; color: var(--ink); background: var(--bg); margin-bottom: 12px; outline: none; }
+.setup-input:focus { border-color: var(--lavender-mid); }
+.path-choose { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.path-btn { padding: 16px 12px; border-radius: var(--r); border: 2px solid var(--border); background: var(--white); cursor: pointer; text-align: left; transition: all 0.15s; }
+.path-btn.selected.a { border-color: var(--sky-mid); background: var(--sky); }
+.path-btn.selected.b { border-color: var(--lavender-mid); background: var(--lavender); }
+.path-btn h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.path-btn p { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.btn-primary { width: 100%; padding: 14px; border-radius: var(--r-sm); background: var(--lavender-dark); color: white; font-family: var(--sans); font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.15s; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-sm { padding: 8px 16px; border-radius: var(--r-sm); background: var(--lavender-dark); color: white; font-family: var(--sans); font-size: 13px; font-weight: 500; border: none; cursor: pointer; }
+.btn-outline { padding: 8px 16px; border-radius: var(--r-sm); background: transparent; color: var(--lavender-dark); font-family: var(--sans); font-size: 13px; font-weight: 500; border: 1.5px solid var(--lavender-mid); cursor: pointer; }
+
+/* CARDS */
+.card { background: var(--white); border-radius: var(--r); border: 1px solid var(--border); padding: 20px; }
+.card-grid { display: grid; gap: 14px; }
+.card-grid-2 { grid-template-columns: 1fr 1fr; }
+.card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* STAT CARDS */
+.stat-card { border-radius: var(--r); padding: 16px 18px; }
+.stat-card .stat-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.stat-card .stat-value { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.stat-card .stat-sub { font-size: 12px; margin-top: 2px; }
+.stat-peach { background: var(--peach); } .stat-peach .stat-label { color: var(--peach-dark); } .stat-peach .stat-value { color: var(--peach-dark); } .stat-peach .stat-sub { color: var(--peach-mid); }
+.stat-mint { background: var(--mint); } .stat-mint .stat-label { color: var(--mint-dark); } .stat-mint .stat-value { color: var(--mint-dark); } .stat-mint .stat-sub { color: var(--mint-mid); }
+.stat-sky { background: var(--sky); } .stat-sky .stat-label { color: var(--sky-dark); } .stat-sky .stat-value { color: var(--sky-dark); } .stat-sky .stat-sub { color: var(--sky-mid); }
+.stat-lavender { background: var(--lavender); } .stat-lavender .stat-label { color: var(--lavender-dark); } .stat-lavender .stat-value { color: var(--lavender-dark); } .stat-lavender .stat-sub { color: var(--lavender-mid); }
+.stat-lemon { background: var(--lemon); } .stat-lemon .stat-label { color: var(--lemon-dark); } .stat-lemon .stat-value { color: var(--lemon-dark); } .stat-lemon .stat-sub { color: var(--lemon-mid); }
+.stat-rose { background: var(--rose); } .stat-rose .stat-label { color: var(--rose-dark); } .stat-rose .stat-value { color: var(--rose-dark); } .stat-rose .stat-sub { color: var(--rose-mid); }
+
+/* PROGRESS BAR */
+.progress-wrap { background: rgba(0,0,0,0.06); border-radius: 100px; height: 8px; overflow: hidden; margin: 8px 0; }
+.progress-bar { height: 100%; border-radius: 100px; transition: width 0.4s ease; }
+.bar-sky { background: var(--sky-mid); }
+.bar-lavender { background: var(--lavender-mid); }
+.bar-mint { background: var(--mint-mid); }
+.bar-peach { background: var(--peach-mid); }
+
+/* SECTION TITLE */
+.section-title { font-family: var(--serif); font-size: 22px; color: var(--ink); margin-bottom: 4px; }
+.section-sub { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+
+/* TASK ITEMS */
+.task-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.task-item:last-child { border-bottom: none; }
+.task-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); background: var(--white); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; margin-top: 1px; }
+.task-check.done { background: var(--mint-mid); border-color: var(--mint-mid); }
+.task-check.done::after { content: '✓'; color: white; font-size: 13px; font-weight: 700; }
+.task-info { flex: 1; }
+.task-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 3px; }
+.task-title.done-text { text-decoration: line-through; color: var(--muted); }
+.task-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.task-meta { display: flex; gap: 8px; align-items: center; margin-top: 5px; flex-wrap: wrap; }
+.badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
+.badge-sky { background: var(--sky); color: var(--sky-dark); }
+.badge-lavender { background: var(--lavender); color: var(--lavender-dark); }
+.badge-peach { background: var(--peach); color: var(--peach-dark); }
+.badge-mint { background: var(--mint); color: var(--mint-dark); }
+.badge-lemon { background: var(--lemon); color: var(--lemon-dark); }
+.badge-rose { background: var(--rose); color: var(--rose-dark); }
+.task-xp { font-size: 11px; color: var(--mint-dark); font-weight: 600; }
+
+/* WEEK CALENDAR */
+.week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 20px; }
+.day-pill { border-radius: 10px; padding: 10px 6px; text-align: center; border: 1px solid var(--border); background: var(--white); }
+.day-pill .day-name { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.05em; margin-bottom: 4px; }
+.day-pill .day-num { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.day-pill .day-dot { width: 8px; height: 8px; border-radius: 50%; margin: 0 auto; }
+.day-pill.studied { background: var(--mint); border-color: var(--mint-mid); }
+.day-pill.studied .day-name, .day-pill.studied .day-num { color: var(--mint-dark); }
+.day-pill.today { border: 2px solid var(--lavender-mid); }
+.day-pill.today .day-num { color: var(--lavender-dark); }
+.day-pill.missed { background: var(--rose); border-color: var(--rose-mid); }
+.day-pill.missed .day-name, .day-pill.missed .day-num { color: var(--rose-dark); }
+
+/* PATH TABS inside dashboard */
+.path-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+.path-toggle-btn { padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 500; border: 1.5px solid var(--border); background: var(--white); cursor: pointer; transition: all 0.15s; color: var(--ink-soft); }
+.path-toggle-btn.active-a { background: var(--sky); border-color: var(--sky-mid); color: var(--sky-dark); }
+.path-toggle-btn.active-b { background: var(--lavender); border-color: var(--lavender-mid); color: var(--lavender-dark); }
+
+/* LEADERBOARD */
+.lb-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.lb-row:last-child { border-bottom: none; }
+.lb-rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.rank-1 { background: var(--lemon); color: var(--lemon-dark); }
+.rank-2 { background: #E8E8E8; color: #555; }
+.rank-3 { background: var(--peach); color: var(--peach-dark); }
+.rank-other { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+.lb-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.lb-info { flex: 1; }
+.lb-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.lb-detail { font-size: 12px; color: var(--muted); }
+.lb-xp { font-size: 16px; font-weight: 700; color: var(--lavender-dark); }
+.lb-badge-you { font-size: 10px; background: var(--lavender); color: var(--lavender-dark); padding: 2px 8px; border-radius: 100px; font-weight: 600; margin-left: 6px; }
+
+/* CERT PROGRESS */
+.cert-card { padding: 16px 18px; border-radius: var(--r); border: 1px solid var(--border); background: var(--white); margin-bottom: 10px; }
+.cert-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.cert-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+.cert-timeline { font-size: 12px; color: var(--muted); }
+.cert-pct { font-size: 13px; font-weight: 700; }
+
+/* ALERT / PROMPT BANNER */
+.alert-banner { border-radius: var(--r-sm); padding: 14px 16px; font-size: 13px; line-height: 1.5; margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start; }
+.alert-banner .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn { background: var(--lemon); color: var(--lemon-dark); border: 1px solid var(--lemon-mid); }
+.alert-success { background: var(--mint); color: var(--mint-dark); border: 1px solid var(--mint-mid); }
+.alert-info { background: var(--sky); color: var(--sky-dark); border: 1px solid var(--sky-mid); }
+.alert-miss { background: var(--rose); color: var(--rose-dark); border: 1px solid var(--rose-mid); }
+
+/* MONTH VIEW */
+.month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.month-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; }
+.month-day.empty { background: transparent; }
+.month-day.future { background: var(--bg); color: var(--muted); }
+.month-day.studied { background: var(--mint); color: var(--mint-dark); }
+.month-day.missed { background: var(--rose); color: var(--rose-dark); }
+.month-day.today { background: var(--lavender); color: var(--lavender-dark); font-weight: 700; }
+
+/* MILESTONE */
+.milestone-row { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.milestone-row:last-child { border-bottom: none; }
+.milestone-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.milestone-info { flex: 1; }
+.milestone-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.milestone-desc { font-size: 12px; color: var(--muted); }
+.milestone-status { font-size: 12px; font-weight: 600; }
+.ms-done { color: var(--mint-dark); }
+.ms-pending { color: var(--muted); }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 20px; padding: 28px; max-width: 420px; width: 100%; }
+.modal h3 { font-family: var(--serif); font-size: 22px; margin-bottom: 8px; }
+.modal p { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+.modal-btns { display: flex; gap: 10px; }
+
+/* FOOTER NOTE */
+.footer-note { font-size: 12px; color: var(--muted); text-align: center; padding: 24px 0 48px; }
+
+/* NOTES */
+.task-notes-wrap { margin-top: 10px; }
+.task-notes-toggle { font-size: 12px; color: var(--lavender-dark); font-weight: 500; background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 4px; }
+.task-notes-toggle:hover { opacity: 0.75; }
+.task-notes-box { display: none; margin-top: 8px; }
+.task-notes-box.open { display: block; }
+.task-notes-textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1.5px solid var(--lavender-mid); border-radius: var(--r-sm); font-family: var(--sans); font-size: 13px; color: var(--ink); background: var(--lavender); resize: vertical; outline: none; line-height: 1.5; }
+.task-notes-textarea:focus { border-color: var(--lavender-dark); background: var(--white); }
+.task-notes-textarea::placeholder { color: var(--lavender-mid); }
+.task-notes-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.task-notes-saved { font-size: 11px; color: var(--mint-dark); font-weight: 500; }
+.task-notes-hint { font-size: 11px; color: var(--muted); }
+.powershell-section { background: linear-gradient(135deg, var(--sky) 0%, var(--lavender) 100%); border-radius: var(--r); padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+
+/* RESPONSIVE — iPad & mobile */
+@media (max-width: 768px) {
+  nav { padding: 0 16px; }
+  .nav-logo { font-size: 16px; margin-right: 12px; }
+  .nav-tab { padding: 14px 12px; font-size: 12px; }
+  .page { padding: 20px 16px; }
+  .card-grid-4 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr; }
+  .setup-card { padding: 28px 20px; }
+  .stat-card .stat-value { font-size: 24px; }
+  .week-strip { gap: 4px; }
+  .day-pill { padding: 8px 4px; }
+  .day-pill .day-num { font-size: 13px; }
+}
+@media (max-width: 640px) {
+  .card-grid-4 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr; }
+  .card-grid-2 { grid-template-columns: 1fr; }
+  .path-toggle { flex-wrap: wrap; }
+  .modal { padding: 20px; }
+}
+/* iPad landscape — keep 2-col grids comfortable */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .page { max-width: 100%; padding: 24px 28px; }
+  .card-grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .card-grid-2 { grid-template-columns: 1fr 1fr; }
+  nav { padding: 0 28px; }
+}
+/* Touch-friendly tap targets */
+@media (pointer: coarse) {
+  .nav-tab { padding: 18px 14px; }
+  .task-check { width: 28px; height: 28px; }
+  .btn-sm, .btn-outline, .btn-primary { min-height: 44px; }
+  .path-toggle-btn { min-height: 44px; padding: 10px 18px; }
+  .task-notes-toggle { min-height: 36px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div class="setup-card">
+    <div style="font-size:36px;margin-bottom:12px;">🎓</div>
+    <h2>Welcome to your<br><em style="font-style:italic;color:var(--lavender-dark);">IT Training Hub</em></h2>
+    <p>Your personalised study tracker for both IT career paths. Set up your profile to get started — you can share a link with colleagues so they can join too.</p>
+    <input class="setup-input" id="setup-name" type="text" placeholder="Your name (e.g. Ibrahim)">
+    <div style="font-size:13px;font-weight:600;color:var(--ink-soft);text-align:left;margin-bottom:10px;">Which path(s) are you following?</div>
+    <div class="path-choose">
+      <button class="path-btn a selected" id="btn-path-a" onclick="togglePath('a')">
+        <h4 style="color:var(--sky-dark);">☁️ Path A</h4>
+        <p>Cloud &amp; Systems Engineer</p>
+      </button>
+      <button class="path-btn b selected" id="btn-path-b" onclick="togglePath('b')">
+        <h4 style="color:var(--lavender-dark);">🛡️ Path B</h4>
+        <p>IT Security Analyst</p>
+      </button>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--ink-soft);text-align:left;margin-bottom:8px;">Daily study goal</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" id="goal-btns">
+      <button class="btn-outline goal-btn" data-mins="30" onclick="setGoal(30)">30 min</button>
+      <button class="btn-outline goal-btn" data-mins="60" onclick="setGoal(60)">1 hour</button>
+      <button class="btn-outline goal-btn" data-mins="90" onclick="setGoal(90)">90 min</button>
+      <button class="btn-sm goal-btn" data-mins="120" onclick="setGoal(120)">2 hours</button>
+    </div>
+    <button class="btn-primary" onclick="setupUser()">Start my training journey →</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none;">
+
+<nav>
+  <div class="nav-logo">IT<span>Tracker</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="showPage('tasks')">Today's Tasks</button>
+    <button class="nav-tab" onclick="showPage('progress')">Progress</button>
+    <button class="nav-tab" onclick="showPage('leaderboard')">Leaderboard</button>
+    <button class="nav-tab" onclick="showPage('roadmap')">Roadmap</button>
+    <button class="nav-tab" onclick="showPage('notes')">My Notes</button>
+  </div>
+  <div class="nav-user">
+    <span class="user-name-display" id="nav-username"></span>
+    <button class="avatar" id="nav-avatar" onclick="showModal('profile-modal')"></button>
+  </div>
+</nav>
+
+<!-- DASHBOARD PAGE -->
+<div class="page active" id="page-dashboard">
+  <div id="dashboard-alert" style="margin-bottom:16px;"></div>
+
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div class="section-title" id="dash-greeting">Good morning!</div>
+      <div class="section-sub" id="dash-date"></div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-outline" onclick="showPage('tasks')">View tasks →</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="card-grid card-grid-4" style="margin-bottom:20px;">
+    <div class="stat-card stat-peach">
+      <div class="stat-label">🔥 Streak</div>
+      <div class="stat-value" id="stat-streak">0</div>
+      <div class="stat-sub">days in a row</div>
+    </div>
+    <div class="stat-card stat-mint">
+      <div class="stat-label">⭐ XP Earned</div>
+      <div class="stat-value" id="stat-xp">0</div>
+      <div class="stat-sub">experience points</div>
+    </div>
+    <div class="stat-card stat-sky">
+      <div class="stat-label">✅ Tasks Done</div>
+      <div class="stat-value" id="stat-tasks">0</div>
+      <div class="stat-sub">total completed</div>
+    </div>
+    <div class="stat-card stat-lavender">
+      <div class="stat-label">📅 Days Studied</div>
+      <div class="stat-value" id="stat-days">0</div>
+      <div class="stat-sub">this month</div>
+    </div>
+  </div>
+
+  <!-- WEEK STRIP -->
+  <div class="card" style="margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:600;">This week</div>
+      <div style="font-size:12px;color:var(--muted);" id="week-xp-label"></div>
+    </div>
+    <div class="week-strip" id="week-strip"></div>
+  </div>
+
+  <!-- TODAY'S TASKS PREVIEW -->
+  <div class="card-grid card-grid-2" style="margin-bottom:20px;">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;color:var(--sky-dark);">☁️ Path A tasks today</div>
+        <span class="badge badge-sky" id="badge-a"></span>
+      </div>
+      <div id="preview-tasks-a"></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:600;color:var(--lavender-dark);">🛡️ Path B tasks today</div>
+        <span class="badge badge-lavender" id="badge-b"></span>
+      </div>
+      <div id="preview-tasks-b"></div>
+    </div>
+  </div>
+
+  <!-- CERT PROGRESS OVERVIEW -->
+  <div class="card" style="margin-bottom:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Certification progress</div>
+    <div id="cert-overview"></div>
+  </div>
+
+  <!-- MOTIVATIONAL -->
+  <div class="alert-banner alert-info" id="daily-quote" style="margin-bottom:0;"></div>
+</div>
+
+<!-- TASKS PAGE -->
+<div class="page" id="page-tasks">
+  <div class="section-title">Today's tasks</div>
+  <div class="section-sub" id="tasks-date-sub"></div>
+
+  <div class="path-toggle">
+    <button class="path-toggle-btn active-a" id="task-tab-a" onclick="switchTaskTab('a')">☁️ Path A — Cloud</button>
+    <button class="path-toggle-btn" id="task-tab-b" onclick="switchTaskTab('b')">🛡️ Path B — Security</button>
+    <button class="path-toggle-btn" id="task-tab-both" onclick="switchTaskTab('both')" style="margin-left:auto;">Both paths</button>
+  </div>
+
+  <div id="tasks-alert" style="margin-bottom:12px;"></div>
+  <div id="task-list-a" class="card" style="margin-bottom:16px;">
+    <div style="font-size:13px;font-weight:600;color:var(--sky-dark);margin-bottom:4px;">☁️ Path A — Cloud &amp; Systems Engineer</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;" id="task-a-phase"></div>
+    <div id="task-items-a"></div>
+  </div>
+  <div id="task-list-b" class="card">
+    <div style="font-size:13px;font-weight:600;color:var(--lavender-dark);margin-bottom:4px;">🛡️ Path B — IT Security Analyst</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;" id="task-b-phase"></div>
+    <div id="task-items-b"></div>
+  </div>
+
+  <div style="margin-top:16px;text-align:center;">
+    <button class="btn-sm" onclick="logStudySession()" style="margin-right:8px;">Log study session ✓</button>
+    <button class="btn-outline" onclick="showModal('skip-modal')">I need to skip today</button>
+  </div>
+</div>
+
+<!-- PROGRESS PAGE -->
+<div class="page" id="page-progress">
+  <div class="section-title">Your progress</div>
+  <div class="section-sub">Track how far you've come on each path</div>
+
+  <div style="margin-bottom:20px;">
+    <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">This month</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;">
+      <div style="font-size:10px;color:var(--muted);text-align:center;">M</div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;">T</div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;">W</div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;">T</div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;">F</div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;">S</div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;">S</div>
+    </div>
+    <div class="month-grid" id="month-grid"></div>
+    <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);"><div style="width:12px;height:12px;border-radius:3px;background:var(--mint);"></div> Studied</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);"><div style="width:12px;height:12px;border-radius:3px;background:var(--rose);"></div> Missed</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);"><div style="width:12px;height:12px;border-radius:3px;background:var(--lavender);"></div> Today</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);"><div style="width:12px;height:12px;border-radius:3px;background:var(--bg);border:1px solid var(--border);"></div> Future</div>
+    </div>
+  </div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">Certification ladder — Path A</div>
+  <div id="cert-ladder-a" style="margin-bottom:20px;"></div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">Certification ladder — Path B</div>
+  <div id="cert-ladder-b" style="margin-bottom:20px;"></div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:14px;">Milestones</div>
+    <div id="milestones-list"></div>
+  </div>
+
+  <div class="card-grid card-grid-3">
+    <div class="stat-card stat-mint">
+      <div class="stat-label">Weekly avg</div>
+      <div class="stat-value" id="prog-weekly-avg">0</div>
+      <div class="stat-sub">tasks/week</div>
+    </div>
+    <div class="stat-card stat-lemon">
+      <div class="stat-label">Best streak</div>
+      <div class="stat-value" id="prog-best-streak">0</div>
+      <div class="stat-sub">days</div>
+    </div>
+    <div class="stat-card stat-rose">
+      <div class="stat-label">Completion</div>
+      <div class="stat-value" id="prog-completion">0%</div>
+      <div class="stat-sub">of all tasks</div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD PAGE -->
+<div class="page" id="page-leaderboard">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div class="section-title">Leaderboard</div>
+      <div class="section-sub">Study with friends — share your invite code to compete together</div>
+    </div>
+  </div>
+
+  <div class="alert-banner alert-info" style="margin-bottom:20px;">
+    <div class="alert-icon">🔗</div>
+    <div>
+      <strong>Invite your colleagues!</strong> Share your unique code: <strong id="invite-code" style="background:var(--sky);padding:2px 8px;border-radius:6px;font-family:monospace;"></strong>
+      <br><span style="font-size:12px;margin-top:4px;display:block;">Colleagues can enter this code when they set up their own tracker to join your leaderboard.</span>
+      <button class="btn-sm" style="margin-top:8px;font-size:12px;padding:6px 12px;" onclick="copyInviteCode()">Copy code</button>
+      <button class="btn-outline" style="margin-top:8px;font-size:12px;padding:6px 12px;margin-left:6px;" onclick="showModal('join-modal')">Join a group</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:600;">Rankings this month</div>
+      <div style="font-size:12px;color:var(--muted);" id="lb-period"></div>
+    </div>
+    <div id="leaderboard-list"></div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:14px;font-weight:600;margin-bottom:4px;">How XP is earned</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Complete tasks to earn experience points and climb the leaderboard</div>
+    <div style="display:grid;gap:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);"><span>Complete a reading/video task</span><span style="font-weight:600;color:var(--mint-dark);">+10 XP</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);"><span>Complete a hands-on lab task</span><span style="font-weight:600;color:var(--mint-dark);">+20 XP</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);"><span>Complete a quiz/challenge task</span><span style="font-weight:600;color:var(--mint-dark);">+15 XP</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);"><span>Study day streak bonus (per day)</span><span style="font-weight:600;color:var(--peach-dark);">+5 XP</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;"><span>Complete all tasks in a day</span><span style="font-weight:600;color:var(--lavender-dark);">+25 XP bonus</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP PAGE -->
+<div class="page" id="page-roadmap">
+  <div class="section-title">Your 18-month roadmap</div>
+  <div class="section-sub">A phased plan that builds from beginner to specialist — difficulty increases gradually</div>
+
+  <div id="roadmap-phases"></div>
+</div>
+
+<!-- NOTES PAGE -->
+<div class="page" id="page-notes">
+  <div class="section-title">My notes</div>
+  <div class="section-sub">Everything you've written — what you learned, what to revisit, and things to double back on</div>
+
+  <div class="alert-banner alert-info" style="margin-bottom:20px;">
+    <div class="alert-icon">📝</div>
+    <div>Notes are attached to each task in <strong>Today's Tasks</strong>. Everything you write is saved automatically and collected here for easy review.</div>
+  </div>
+
+  <div id="notes-review-list"></div>
+
+  <div class="card" style="margin-top:16px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Things to double back on</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Paste or type anything here that you want to revisit — topics, links, questions</div>
+    <textarea class="task-notes-textarea" id="global-revisit-notes" style="min-height:120px;" placeholder="e.g. OSI model layers — need to go over again&#10;Subnetting — watch another video&#10;What is the difference between IaaS and PaaS?" oninput="saveRevisitNotes()"></textarea>
+    <div class="task-notes-meta" style="margin-top:6px;">
+      <span class="task-notes-hint">Auto-saved to your browser</span>
+      <span class="task-notes-saved" id="revisit-saved" style="display:none;">✓ Saved</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main-app -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal">
+    <h3>Your profile</h3>
+    <p>Update your name or reset your progress. Your progress is saved in this browser.</p>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;">Name</div>
+      <input class="setup-input" id="profile-name-input" type="text">
+    </div>
+    <div class="modal-btns">
+      <button class="btn-primary" onclick="saveProfile()" style="flex:1;">Save</button>
+      <button class="btn-outline" onclick="closeModal('profile-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="skip-modal">
+  <div class="modal">
+    <h3>Skipping today?</h3>
+    <p>That's okay — life happens! Log it as a rest day so your streak stays accurate. Remember, consistency over perfection.</p>
+    <div class="modal-btns">
+      <button class="btn-primary" onclick="logSkip()" style="flex:1;">Log rest day</button>
+      <button class="btn-outline" onclick="closeModal('skip-modal')">I'll study later</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="join-modal">
+  <div class="modal">
+    <h3>Join a group</h3>
+    <p>Enter your colleague's invite code to join their leaderboard and track progress together.</p>
+    <input class="setup-input" id="join-code-input" type="text" placeholder="Enter invite code (e.g. ITT-ABC123)" style="font-family:monospace;text-transform:uppercase;">
+    <div class="modal-btns">
+      <button class="btn-primary" onclick="joinGroup()" style="flex:1;">Join group</button>
+      <button class="btn-outline" onclick="closeModal('join-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="task-done-modal">
+  <div class="modal" style="text-align:center;">
+    <div style="font-size:48px;margin-bottom:8px;" id="done-emoji">🎉</div>
+    <h3 id="done-title">Task complete!</h3>
+    <p id="done-msg">Keep going — you're building great habits!</p>
+    <button class="btn-primary" onclick="closeModal('task-done-modal')">Continue →</button>
+  </div>
+</div>
+
+<script>
+const QUOTES = [
+  '"Seek knowledge, for seeking it is worship." — Prophet Muhammad ﷺ',
+  '"Whoever travels a path in search of knowledge, Allah makes easy for him a path to Paradise." — Hadith',
+  '"The expert in anything was once a beginner." — Helen Hayes',
+  '"Small daily improvements over time lead to stunning results." — Robin Sharma',
+  '"You don\'t have to be great to start, but you must start to be great." — Zig Ziglar',
+  '"Every expert was once a beginner. Keep going!"',
+  '"Knowledge is not what is memorised. Knowledge is what benefits." — Imam Al-Shafi\'i',
+];
+
+const AVATARCOLORS = [
+  ['#D6EDFB','#1A5F8A'], ['#EDE8FB','#4A2FA0'], ['#D6F5E3','#1E7A50'],
+  ['#FDEBD0','#C86B3A'], ['#FBE8EE','#A03060'], ['#FBF6D6','#7A6010']
+];
+
+const TASKS_A = {
+  phase1: {
+    name: 'Phase 1 — Foundation (Months 1–2)',
+    cert: 'Network+ & Security+',
+    tasks: [
+      { id:'a1', title:'Watch: What is a network? (Professor Messer N+ video 1)', type:'video', xp:10, desc:'Start your Network+ journey. Watch the first free video at professormesser.com — takes about 15 minutes.' },
+      { id:'a2', title:'Read: OSI model — 7 layers explained', type:'read', xp:10, desc:'Search "OSI model explained simply" on YouTube. Understanding this is foundational for everything else.' },
+      { id:'a3', title:'Lab: Set up your free Microsoft Learn account', type:'lab', xp:20, desc:'Go to learn.microsoft.com and create a free account. Explore the AZ-900 learning path.' },
+      { id:'a4', title:'Quiz: Network basics self-test (10 questions)', type:'quiz', xp:15, desc:'Write 10 questions about what you\'ve learned today and answer them without notes. Check your answers.' },
+      { id:'a5', title:'Read: What is cloud computing? (Microsoft Learn AZ-900 Module 1)', type:'read', xp:10, desc:'Complete the first free AZ-900 module on Microsoft Learn. Takes about 30 minutes.' },
+      { id:'a6', title:'Watch: IP addressing and subnetting basics', type:'video', xp:10, desc:'Professor Messer subnetting video — this is the trickiest part of Network+ but vital. Take notes.' },
+      { id:'a7', title:'Lab: Create a free Azure account and explore the portal', type:'lab', xp:20, desc:'Go to azure.microsoft.com/free — create your account. You get £150 credit. Click around the portal.' },
+      { id:'a19', title:'PowerShell: Open it for the first time & run your first command', type:'lab', xp:20, desc:'Press Windows key, type "PowerShell", right-click and Run as Administrator. Type: Get-Date and press Enter. You just ran your first script! Then try: Get-ComputerInfo — it shows system details.' },
+      { id:'a20', title:'Watch: PowerShell for beginners — what it is and why it matters', type:'video', xp:10, desc:'Search "PowerShell for beginners 2024" on YouTube. Network Chuck has a great free intro video. Just watch — no pressure to memorise yet.' },
+      { id:'a21', title:'Read: PowerShell basics — 5 commands every IT pro uses', type:'read', xp:10, desc:'Search "PowerShell essential commands for sysadmins". Learn: Get-Help, Get-Service, Get-Process, Set-ExecutionPolicy, Get-ADUser. Write each one in your notes section.' },
+      { id:'a22', title:'Lab: Use PowerShell to list users on your PC', type:'lab', xp:20, desc:'In PowerShell type: Get-LocalUser — this lists all accounts. Then try: Get-Service | Where-Object {$_.Status -eq "Running"} — lists all running services. This is real sysadmin work!' },
+    ]
+  },
+  phase2: {
+    name: 'Phase 2 — Azure Fundamentals (Months 3–4)',
+    cert: 'AZ-900',
+    tasks: [
+      { id:'a8', title:'Complete: AZ-900 Module 2 — Cloud service types', type:'read', xp:10, desc:'IaaS, PaaS, SaaS — learn what each means and real-world examples of each.' },
+      { id:'a9', title:'Lab: Create your first Azure Virtual Machine', type:'lab', xp:20, desc:'In your free Azure account, spin up a Windows Server VM. Stop it after to save credits!' },
+      { id:'a10', title:'Watch: John Savill AZ-900 study cram', type:'video', xp:10, desc:'Search "John Savill AZ-900 study cram" on YouTube. His 3-hour video is the best free resource.' },
+      { id:'a11', title:'Quiz: Take a free AZ-900 practice test (MeasureUp trial)', type:'quiz', xp:15, desc:'Try a free practice exam. Identify weak areas to focus on. Aim to understand wrong answers.' },
+      { id:'a12', title:'Lab: Explore Azure Active Directory (Entra ID)', type:'lab', xp:20, desc:'In your Azure portal, navigate to Microsoft Entra ID. Create a test user and assign a role.' },
+      { id:'a13', title:'Read: Azure pricing and cost management', type:'read', xp:10, desc:'Complete the pricing module on Microsoft Learn. Understanding costs is key in cloud roles.' },
+    ]
+  },
+  phase3: {
+    name: 'Phase 3 — Azure Admin (Months 5–8)',
+    cert: 'AZ-104',
+    tasks: [
+      { id:'a14', title:'Watch: John Savill AZ-104 series — Identity & Governance', type:'video', xp:10, desc:'Start the AZ-104 study playlist on John Savill\'s YouTube. Identity module first.' },
+      { id:'a15', title:'Lab: Configure Conditional Access policies in Entra ID', type:'lab', xp:20, desc:'Create a test Conditional Access policy. This directly applies to your current role!' },
+      { id:'a16', title:'Lab: Deploy an Azure Virtual Network and connect two VMs', type:'lab', xp:20, desc:'Networking in Azure. Create a VNet, add subnets, deploy two VMs and test connectivity.' },
+      { id:'a17', title:'Quiz: AZ-104 practice test — Storage section', type:'quiz', xp:15, desc:'Storage Accounts, Blob storage, file shares. Do a focused practice test on this topic.' },
+      { id:'a18', title:'Lab: Configure Azure Monitor and set up alerts', type:'lab', xp:20, desc:'Set up monitoring on your VMs. Create an alert rule for CPU usage. Real-world admin skill.' },
+    ]
+  }
+};
+
+const TASKS_B = {
+  phase1: {
+    name: 'Phase 1 — Security Foundations (Months 1–2)',
+    cert: 'CompTIA Security+',
+    tasks: [
+      { id:'b1', title:'Watch: Professor Messer Security+ — Threats, Attacks & Vulnerabilities (1.1)', type:'video', xp:10, desc:'Start at professormesser.com/sy0-701 — free videos. First section covers threat types you see in your job!' },
+      { id:'b2', title:'Sign up: TryHackMe — complete the "Pre-Security" path intro', type:'lab', xp:20, desc:'Go to tryhackme.com and create a free account. Start the Pre-Security learning path. No experience needed.' },
+      { id:'b3', title:'Read: What is a SIEM and how does it work?', type:'read', xp:10, desc:'Search "SIEM explained" — read two articles. As a security analyst you\'ll use this daily.' },
+      { id:'b4', title:'Lab: TryHackMe — "How The Web Works" room', type:'lab', xp:20, desc:'Complete this free TryHackMe room. Understanding HTTP, DNS and how websites work is foundational.' },
+      { id:'b5', title:'Watch: Security+ Domain 2 — Architecture & Design', type:'video', xp:10, desc:'Professor Messer Domain 2 videos. Defence in depth, network security zones, Zero Trust.' },
+      { id:'b6', title:'Quiz: Security+ practice quiz — Threat types (15 questions)', type:'quiz', xp:15, desc:'Jason Dion\'s free practice questions on Udemy. Focus on malware types, attack vectors, social engineering.' },
+      { id:'b7', title:'Read: What is Incident Response? The 6 phases explained', type:'read', xp:10, desc:'Search "NIST incident response lifecycle". You already handle incidents — now learn the formal framework.' },
+    ]
+  },
+  phase2: {
+    name: 'Phase 2 — Analyst Skills (Months 3–6)',
+    cert: 'CompTIA CySA+',
+    tasks: [
+      { id:'b8', title:'Lab: TryHackMe — "SOC Level 1" path (first room)', type:'lab', xp:20, desc:'The SOC Level 1 path on TryHackMe is designed exactly for your target role. Start room 1.' },
+      { id:'b9', title:'Watch: What is threat intelligence? (YouTube)', type:'video', xp:10, desc:'Search "threat intelligence explained for beginners". IOCs, threat actors, attribution basics.' },
+      { id:'b10', title:'Lab: Set up a free Microsoft Sentinel trial and explore', type:'lab', xp:20, desc:'Sentinel is Microsoft\'s SIEM. Get a trial through Azure free account. Explore the dashboard.' },
+      { id:'b11', title:'Read: CySA+ Domain 1 — Threat Intelligence & Vulnerability Assessment', type:'read', xp:10, desc:'CompTIA study guide Chapter 1. Understanding vulnerability scanning vs penetration testing.' },
+      { id:'b12', title:'Quiz: CySA+ practice test — Threat management section', type:'quiz', xp:15, desc:'Jason Dion CySA+ Udemy course includes practice tests. Focus on threat management domain.' },
+      { id:'b13', title:'Lab: TryHackMe — "Network Analysis" room', type:'lab', xp:20, desc:'Analyse network traffic to identify threats. Core SOC analyst skill — wire analysis.' },
+    ]
+  },
+  phase3: {
+    name: 'Phase 3 — Microsoft Security Stack (Months 7–10)',
+    cert: 'SC-200',
+    tasks: [
+      { id:'b14', title:'Watch: SC-200 intro — Microsoft Security Operations overview', type:'video', xp:10, desc:'Microsoft Learn has free SC-200 videos. Start with the "Mitigate threats using Microsoft Defender" module.' },
+      { id:'b15', title:'Lab: Explore Microsoft Defender for Endpoint (free trial)', type:'lab', xp:20, desc:'This maps directly to your ManageEngine/Jamf experience. Enable Defender trial and onboard a test device.' },
+      { id:'b16', title:'Lab: Create Sentinel analytics rules', type:'lab', xp:20, desc:'In your Sentinel instance, create a scheduled analytics rule. This is real SOC analyst work.' },
+      { id:'b17', title:'Read: Kusto Query Language (KQL) basics', type:'read', xp:10, desc:'KQL is what you use to query Sentinel logs. Search "KQL tutorial for beginners". Learn 5 basic queries.' },
+      { id:'b18', title:'Quiz: SC-200 practice test — Sentinel section', type:'quiz', xp:15, desc:'Focus on Sentinel analytics, incidents, and playbooks. Use Microsoft Learn practice assessment.' },
+    ]
+  }
+};
+
+const CERTS_A = [
+  { name:'CompTIA Network+', timeline:'Month 1–2', color:'sky', totalTasks:7, phaseKey:'phase1' },
+  { name:'CompTIA Security+', timeline:'Month 1–2', color:'sky', totalTasks:7, phaseKey:'phase1' },
+  { name:'AZ-900 — Azure Fundamentals', timeline:'Month 3–4', color:'sky', totalTasks:6, phaseKey:'phase2' },
+  { name:'AZ-104 — Azure Administrator', timeline:'Month 5–8', color:'sky', totalTasks:5, phaseKey:'phase3' },
+];
+
+const CERTS_B = [
+  { name:'CompTIA Security+', timeline:'Month 1–2', color:'lavender', totalTasks:7, phaseKey:'phase1' },
+  { name:'CompTIA CySA+', timeline:'Month 3–6', color:'lavender', totalTasks:6, phaseKey:'phase2' },
+  { name:'Microsoft SC-200', timeline:'Month 7–10', color:'lavender', totalTasks:5, phaseKey:'phase3' },
+];
+
+const PHASES_ROADMAP = [
+  {
+    phase:'Phase 1', period:'Months 1–2', level:'Beginner', levelColor:'mint',
+    tagline:'Building your foundation — go slow, go steady',
+    desc:'No pressure here. This phase is about getting comfortable with the fundamentals. Short videos, easy labs, and building the habit of daily study. You already know more than you think!',
+    pathA:'Network+ & Security+ foundations. Professor Messer videos, basic Azure account setup, IP addressing basics.',
+    pathB:'Security+ foundations. Professor Messer videos, TryHackMe Pre-Security path, SIEM awareness.',
+    tip:'Tip: Study for 20–30 minutes on weekdays and try a longer session (1 hr) on weekends. Consistency beats intensity at this stage.'
+  },
+  {
+    phase:'Phase 2', period:'Months 3–6', level:'Developing', levelColor:'sky',
+    tagline:'Hands-on practice begins — learning by doing',
+    desc:'More lab work now. You\'re setting up real systems in Azure, working through TryHackMe rooms, and starting to see how theory connects to your day job.',
+    pathA:'AZ-900 certification target. Azure Virtual Machines, networking basics in the portal, hands-on labs daily.',
+    pathB:'CySA+ certification target. SOC Level 1 TryHackMe path, Sentinel exploration, threat intelligence basics.',
+    tip:'Tip: At this stage, relate everything to your current role. "How does this apply to what I do today?" helps things stick.'
+  },
+  {
+    phase:'Phase 3', period:'Months 7–12', level:'Intermediate', levelColor:'lemon',
+    tagline:'Going deeper — specialist knowledge builds',
+    desc:'This is where things get genuinely interesting. The difficulty ramps up, but so does your confidence. You should be seeing real-world connections now.',
+    pathA:'AZ-104 — the core milestone. Advanced Azure admin tasks, Conditional Access, monitoring, governance.',
+    pathB:'SC-200 — Microsoft security stack. Sentinel analytics rules, Defender for Endpoint, KQL query language.',
+    tip:'Tip: Join study groups or forums at this stage. r/AzureCertification and r/CompTIA on Reddit are active communities.'
+  },
+  {
+    phase:'Phase 4', period:'Months 13–18', level:'Advanced', levelColor:'peach',
+    tagline:'Job-ready — start applying and keep studying',
+    desc:'With your Phase 3 certs in hand, you\'re hireable. Start applying for roles while continuing your next cert. Real interview prep begins now.',
+    pathA:'MD-102 Endpoint Administrator. Job applications begin. Polish your CV to highlight Intune, Jamf, Azure experience.',
+    pathB:'SC-300 Identity Administrator. Job applications begin. Highlight real incident response experience on your CV.',
+    tip:'Tip: Update your LinkedIn now. Recruiters in the UK market actively search for AZ-104 and Security+ holders.'
+  }
+];
+
+const MILESTONES = [
+  { icon:'📖', name:'First study session', desc:'Completed your very first task', xpNeeded:10, key:'first_task' },
+  { icon:'🔥', name:'3-day streak', desc:'Studied 3 days in a row', streakNeeded:3, key:'streak_3' },
+  { icon:'⭐', name:'100 XP earned', desc:'Accumulated 100 experience points', xpNeeded:100, key:'xp_100' },
+  { icon:'🛠️', name:'First lab completed', desc:'Completed your first hands-on lab', key:'first_lab' },
+  { icon:'🔥', name:'7-day streak', desc:'A full week of study!', streakNeeded:7, key:'streak_7' },
+  { icon:'⭐', name:'500 XP earned', desc:'Halfway to expert status!', xpNeeded:500, key:'xp_500' },
+  { icon:'🏆', name:'Phase 1 complete', desc:'Finished all Phase 1 tasks', key:'phase1_done' },
+  { icon:'🎓', name:'1000 XP earned', desc:'You\'re on your way!', xpNeeded:1000, key:'xp_1000' },
+];
+
+let state = {
+  name: '', paths: ['a','b'], goalMins: 60,
+  completedTasks: [], studiedDays: [], skippedDays: [],
+  streak: 0, bestStreak: 0, totalXP: 0,
+  groupCode: '', joinedGroup: '',
+  avatarColor: 0,
+  taskNotes: {}
+};
+
+let currentTaskTab = 'a';
+let todayKey = '';
+
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getInitials(name) {
+  return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) || '?';
+}
+
+function generateCode() {
+  return 'ITT-' + Math.random().toString(36).substr(2,6).toUpperCase();
+}
+
+function saveState() {
+  try { localStorage.setItem('it_tracker_state', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('it_tracker_state');
+    if (s) { state = { ...state, ...JSON.parse(s) }; return true; }
+  } catch(e) {}
+  return false;
+}
+
+function togglePath(p) {
+  const btn = document.getElementById('btn-path-'+p);
+  btn.classList.toggle('selected');
+}
+
+function setGoal(mins) {
+  state.goalMins = mins;
+  document.querySelectorAll('.goal-btn').forEach(b => {
+    if (parseInt(b.dataset.mins) === mins) { b.className = 'btn-sm goal-btn'; }
+    else { b.className = 'btn-outline goal-btn'; }
+  });
+}
+
+function setupUser() {
+  const name = document.getElementById('setup-name').value.trim();
+  if (!name) { alert('Please enter your name to get started!'); return; }
+  const selA = document.getElementById('btn-path-a').classList.contains('selected');
+  const selB = document.getElementById('btn-path-b').classList.contains('selected');
+  if (!selA && !selB) { alert('Please select at least one path!'); return; }
+  state.name = name;
+  state.paths = [];
+  if (selA) state.paths.push('a');
+  if (selB) state.paths.push('b');
+  state.groupCode = generateCode();
+  state.avatarColor = Math.floor(Math.random() * AVATARCOLORS.length);
+  saveState();
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  initApp();
+}
+
+function initApp() {
+  todayKey = getTodayKey();
+  updateStreak();
+  renderNav();
+  renderDashboard();
+  renderTasks();
+  renderProgress();
+  renderLeaderboard();
+  renderRoadmap();
+}
+
+function renderNav() {
+  const av = document.getElementById('nav-avatar');
+  const colors = AVATARCOLORS[state.avatarColor];
+  av.style.background = colors[0];
+  av.style.color = colors[1];
+  av.textContent = getInitials(state.name);
+  document.getElementById('nav-username').textContent = state.name.split(' ')[0];
+}
+
+function updateStreak() {
+  const today = new Date();
+  let streak = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (i === 0 && !state.studiedDays.includes(key)) { break; }
+    if (state.studiedDays.includes(key) || state.skippedDays.includes(key)) { streak++; }
+    else if (i > 0) { break; }
+  }
+  state.streak = streak;
+  if (streak > state.bestStreak) state.bestStreak = streak;
+}
+
+function getTasksByPhase(pathTasks) {
+  const allCompleted = state.completedTasks;
+  const p1Done = pathTasks.phase1.tasks.filter(t=>allCompleted.includes(t.id)).length;
+  const p1Total = pathTasks.phase1.tasks.length;
+  if (p1Done < Math.ceil(p1Total * 0.5)) return { current: pathTasks.phase1, phase: 'phase1' };
+  const p2Done = pathTasks.phase2.tasks.filter(t=>allCompleted.includes(t.id)).length;
+  const p2Total = pathTasks.phase2.tasks.length;
+  if (p2Done < Math.ceil(p2Total * 0.5)) return { current: pathTasks.phase2, phase: 'phase2' };
+  return { current: pathTasks.phase3, phase: 'phase3' };
+}
+
+function getDailyTasks(pathTasks, pathKey) {
+  const { current } = getTasksByPhase(pathTasks);
+  const allTasks = current.tasks;
+  const notDone = allTasks.filter(t => !state.completedTasks.includes(t.id));
+  const done = allTasks.filter(t => state.completedTasks.includes(t.id));
+  const nextFour = notDone.slice(0, 4);
+  const show = [...nextFour, ...done.slice(-2)].slice(0,6);
+  return show;
+}
+
+function renderDashboard() {
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('dash-greeting').textContent = `${greeting}, ${state.name.split(' ')[0]}! 👋`;
+  const d = new Date();
+  document.getElementById('dash-date').textContent = d.toLocaleDateString('en-GB', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  document.getElementById('stat-streak').textContent = state.streak;
+  document.getElementById('stat-xp').textContent = state.totalXP;
+  document.getElementById('stat-tasks').textContent = state.completedTasks.length;
+  const monthDays = state.studiedDays.filter(d => d.startsWith(todayKey.slice(0,7))).length;
+  document.getElementById('stat-days').textContent = monthDays;
+
+  renderWeekStrip();
+  renderTaskPreviews();
+  renderCertOverview();
+
+  const q = QUOTES[new Date().getDay() % QUOTES.length];
+  document.getElementById('daily-quote').innerHTML = `<span style="font-size:20px;margin-right:8px;">💡</span><em style="font-size:13px;color:var(--sky-dark);">${q}</em>`;
+
+  const alertEl = document.getElementById('dashboard-alert');
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
+  const studiedToday = state.studiedDays.includes(todayKey);
+
+  if (!studiedToday && state.completedTasks.length > 0 && !state.studiedDays.includes(yKey) && !state.skippedDays.includes(yKey) && state.studiedDays.length > 0) {
+    alertEl.innerHTML = `<div class="alert-banner alert-miss"><div class="alert-icon">⚠️</div><div><strong>You missed yesterday!</strong> Don't let two days go by — even 20 minutes today will keep your momentum going. Head to Today's Tasks to get back on track.</div></div>`;
+  } else if (studiedToday) {
+    alertEl.innerHTML = `<div class="alert-banner alert-success"><div class="alert-icon">✅</div><div><strong>You've studied today — MashaAllah!</strong> Keep the streak alive. Your consistency is building a great habit.</div></div>`;
+  } else if (state.completedTasks.length === 0) {
+    alertEl.innerHTML = `<div class="alert-banner alert-info"><div class="alert-icon">🎓</div><div><strong>Welcome to your IT training journey!</strong> Head to <strong>Today's Tasks</strong> to complete your first activity. Bismillah — let's begin!</div></div>`;
+  } else {
+    alertEl.innerHTML = `<div class="alert-banner alert-warn"><div class="alert-icon">📚</div><div><strong>Ready to study today?</strong> You have tasks waiting! Even one completed task keeps your streak alive.</div></div>`;
+  }
+}
+
+function renderWeekStrip() {
+  const strip = document.getElementById('week-strip');
+  const days = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  let weekXP = 0;
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() + mondayOffset + i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const isToday = key === todayKey;
+    const studied = state.studiedDays.includes(key);
+    const missed = !studied && !state.skippedDays.includes(key) && d < today && key !== todayKey;
+    const isPast = d <= today;
+    let cls = 'day-pill';
+    if (studied) { cls += ' studied'; weekXP += 30; }
+    else if (missed && isPast) cls += ' missed';
+    if (isToday) cls += ' today';
+    const dotColor = studied ? 'var(--mint-mid)' : (missed && isPast ? 'var(--rose-mid)' : 'var(--border)');
+    html += `<div class="${cls}"><div class="day-name">${days[i]}</div><div class="day-num">${d.getDate()}</div><div class="day-dot" style="background:${dotColor};"></div></div>`;
+  }
+  strip.innerHTML = html;
+  document.getElementById('week-xp-label').textContent = `${weekXP} XP this week`;
+}
+
+function renderTaskPreviews() {
+  const tasksA = getDailyTasks(TASKS_A, 'a');
+  const tasksB = getDailyTasks(TASKS_B, 'b');
+  const doneA = tasksA.filter(t => state.completedTasks.includes(t.id)).length;
+  const doneB = tasksB.filter(t => state.completedTasks.includes(t.id)).length;
+  document.getElementById('badge-a').textContent = `${doneA}/${tasksA.length}`;
+  document.getElementById('badge-b').textContent = `${doneB}/${tasksB.length}`;
+  document.getElementById('preview-tasks-a').innerHTML = tasksA.map(t => {
+    const done = state.completedTasks.includes(t.id);
+    return `<div class="task-item"><div class="task-check ${done?'done':''}" onclick="toggleTask('${t.id}')"></div><div class="task-info"><div class="task-title ${done?'done-text':''}">${t.title}</div></div></div>`;
+  }).join('');
+  document.getElementById('preview-tasks-b').innerHTML = tasksB.map(t => {
+    const done = state.completedTasks.includes(t.id);
+    return `<div class="task-item"><div class="task-check ${done?'done':''}" onclick="toggleTask('${t.id}')"></div><div class="task-info"><div class="task-title ${done?'done-text':''}">${t.title}</div></div></div>`;
+  }).join('');
+}
+
+function renderCertOverview() {
+  const allCerts = [...CERTS_A, ...CERTS_B];
+  const el = document.getElementById('cert-overview');
+  el.innerHTML = allCerts.map(cert => {
+    const phData = cert.color === 'sky' ? TASKS_A[cert.phaseKey] : TASKS_B[cert.phaseKey];
+    const done = phData.tasks.filter(t => state.completedTasks.includes(t.id)).length;
+    const pct = Math.round((done / phData.tasks.length) * 100);
+    return `<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-size:13px;font-weight:500;">${cert.name}</span>
+        <span style="font-size:12px;color:var(--muted);">${pct}% • ${cert.timeline}</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar bar-${cert.color}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderTasks() {
+  const d = new Date();
+  document.getElementById('tasks-date-sub').textContent = d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  renderTaskList('a');
+  renderTaskList('b');
+  switchTaskTab(currentTaskTab);
+
+  const alertEl = document.getElementById('tasks-alert');
+  const studiedToday = state.studiedDays.includes(todayKey);
+  const allDailyA = getDailyTasks(TASKS_A,'a').filter(t=>!state.completedTasks.includes(t.id));
+  const allDailyB = getDailyTasks(TASKS_B,'b').filter(t=>!state.completedTasks.includes(t.id));
+  if (studiedToday && allDailyA.length === 0 && allDailyB.length === 0) {
+    alertEl.innerHTML = `<div class="alert-banner alert-success"><div class="alert-icon">🏆</div><div><strong>All done for today — SubhanAllah!</strong> You're on a ${state.streak}-day streak. Come back tomorrow for new tasks!</div></div>`;
+  } else {
+    alertEl.innerHTML = '';
+  }
+}
+
+function renderTaskList(path) {
+  const pathTasks = path === 'a' ? TASKS_A : TASKS_B;
+  const { current } = getTasksByPhase(pathTasks);
+  const phaseEl = document.getElementById(`task-${path}-phase`);
+  const listEl = document.getElementById(`task-items-${path}`);
+  phaseEl.textContent = current.name + ' — ' + current.cert;
+  const tasks = getDailyTasks(pathTasks, path);
+  const typeMap = { video:'badge-peach', read:'badge-sky', lab:'badge-lavender', quiz:'badge-lemon' };
+  const xpMap = { video:10, read:10, lab:20, quiz:15 };
+  listEl.innerHTML = tasks.map(t => {
+    const done = state.completedTasks.includes(t.id);
+    const savedNote = state.taskNotes && state.taskNotes[t.id] ? state.taskNotes[t.id] : '';
+    const hasNote = savedNote.length > 0;
+    return `<div class="task-item" id="task-wrap-${t.id}">
+      <div class="task-check ${done?'done':''}" onclick="toggleTask('${t.id}')"></div>
+      <div class="task-info">
+        <div class="task-title ${done?'done-text':''}">${t.title}</div>
+        <div class="task-desc">${t.desc}</div>
+        <div class="task-meta">
+          <span class="badge ${typeMap[t.type]||'badge-sky'}">${t.type}</span>
+          <span class="task-xp">+${xpMap[t.type]||10} XP</span>
+        </div>
+        <div class="task-notes-wrap">
+          <button class="task-notes-toggle" onclick="toggleNotes('${t.id}')">
+            ${hasNote ? '📝 View / edit your notes' : '+ Add notes'}
+          </button>
+          <div class="task-notes-box ${hasNote ? 'open' : ''}" id="notes-box-${t.id}">
+            <textarea class="task-notes-textarea" id="notes-ta-${t.id}" placeholder="Write what you learned, what was confusing, or what you want to revisit..." oninput="autoSaveNote('${t.id}')">${savedNote}</textarea>
+            <div class="task-notes-meta">
+              <span class="task-notes-hint">Your notes save automatically</span>
+              <span class="task-notes-saved" id="notes-saved-${t.id}" style="display:none;">✓ Saved</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function switchTaskTab(tab) {
+  currentTaskTab = tab;
+  const la = document.getElementById('task-list-a');
+  const lb = document.getElementById('task-list-b');
+  const ta = document.getElementById('task-tab-a');
+  const tb = document.getElementById('task-tab-b');
+  const tb2 = document.getElementById('task-tab-both');
+  ta.className = 'path-toggle-btn'; tb.className = 'path-toggle-btn'; tb2.className = 'path-toggle-btn';
+  if (tab === 'a') { la.style.display='block'; lb.style.display='none'; ta.classList.add('active-a'); }
+  else if (tab === 'b') { la.style.display='none'; lb.style.display='block'; tb.classList.add('active-b'); }
+  else { la.style.display='block'; lb.style.display='block'; tb2.style.background='var(--lavender)'; tb2.style.borderColor='var(--lavender-mid)'; tb2.style.color='var(--lavender-dark)'; }
+}
+
+function toggleTask(taskId) {
+  const xpMap = { video:10, read:10, lab:20, quiz:15 };
+  const allTasks = [...Object.values(TASKS_A).flatMap(p=>p.tasks), ...Object.values(TASKS_B).flatMap(p=>p.tasks)];
+  const task = allTasks.find(t => t.id === taskId);
+  if (!task) return;
+  const xp = xpMap[task.type] || 10;
+  if (state.completedTasks.includes(taskId)) {
+    state.completedTasks = state.completedTasks.filter(id => id !== taskId);
+    state.totalXP = Math.max(0, state.totalXP - xp);
+  } else {
+    state.completedTasks.push(taskId);
+    state.totalXP += xp;
+    if (!state.studiedDays.includes(todayKey)) {
+      state.studiedDays.push(todayKey);
+      state.streak++;
+      if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+      state.totalXP += 5;
+    }
+    const isFirstTask = state.completedTasks.length === 1;
+    const isFirstLab = task.type === 'lab' && state.completedTasks.filter(id => { const t2 = allTasks.find(x=>x.id===id); return t2&&t2.type==='lab'; }).length === 1;
+    if (isFirstTask || isFirstLab) {
+      const msgs = [
+        ['🎉', 'MashaAllah!', `You earned +${xp} XP! Your first task — the journey begins!`],
+        ['🛠️', 'Lab complete!', `Hands-on learning is the best learning. +${xp} XP earned!`]
+      ];
+      const idx = isFirstLab && !isFirstTask ? 1 : 0;
+      showDoneModal(...msgs[idx]);
+    }
+  }
+  saveState();
+  updateStreak();
+  renderDashboard();
+  renderTasks();
+  renderProgress();
+  renderLeaderboard();
+}
+
+function showDoneModal(emoji, title, msg) {
+  document.getElementById('done-emoji').textContent = emoji;
+  document.getElementById('done-title').textContent = title;
+  document.getElementById('done-msg').textContent = msg;
+  showModal('task-done-modal');
+}
+
+function logStudySession() {
+  if (!state.studiedDays.includes(todayKey)) {
+    state.studiedDays.push(todayKey);
+    state.totalXP += 5;
+    state.streak++;
+    if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+    saveState();
+    updateStreak();
+    renderDashboard();
+    renderProgress();
+    showDoneModal('📚', 'Study session logged!', `Great work today, ${state.name.split(' ')[0]}! Keep the streak alive!`);
+  } else {
+    showDoneModal('✅', 'Already logged!', 'You\'ve already recorded study for today. Come back tomorrow!');
+  }
+}
+
+function logSkip() {
+  if (!state.skippedDays.includes(todayKey)) state.skippedDays.push(todayKey);
+  closeModal('skip-modal');
+  saveState();
+  renderDashboard();
+  renderProgress();
+}
+
+function renderProgress() {
+  renderMonthGrid();
+  renderCertLadders();
+  renderMilestones();
+  const totalTasks = [...Object.values(TASKS_A).flatMap(p=>p.tasks), ...Object.values(TASKS_B).flatMap(p=>p.tasks)].length;
+  const done = state.completedTasks.length;
+  document.getElementById('prog-completion').textContent = Math.round((done/totalTasks)*100) + '%';
+  document.getElementById('prog-best-streak').textContent = state.bestStreak;
+  const weeks = Math.max(1, state.studiedDays.length / 7);
+  document.getElementById('prog-weekly-avg').textContent = Math.round(done / weeks);
+}
+
+function renderMonthGrid() {
+  const today = new Date();
+  const y = today.getFullYear(), m = today.getMonth();
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const offset = firstDay === 0 ? 6 : firstDay - 1;
+  let html = '';
+  for (let i = 0; i < offset; i++) html += `<div class="month-day empty"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = key === todayKey;
+    const studied = state.studiedDays.includes(key);
+    const skipped = state.skippedDays.includes(key);
+    const dayDate = new Date(y, m, d);
+    const missed = !studied && !skipped && dayDate < today && !isToday;
+    let cls = 'month-day';
+    if (isToday) cls += ' today';
+    else if (studied) cls += ' studied';
+    else if (missed) cls += ' missed';
+    else if (dayDate > today) cls += ' future';
+    html += `<div class="${cls}">${d}</div>`;
+  }
+  document.getElementById('month-grid').innerHTML = html;
+}
+
+function renderCertLadders() {
+  const renderLadder = (certs, pathTasks, elId, barClass) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = certs.map(cert => {
+      const phData = pathTasks[cert.phaseKey];
+      const done = phData.tasks.filter(t => state.completedTasks.includes(t.id)).length;
+      const total = phData.tasks.length;
+      const pct = Math.round((done/total)*100);
+      return `<div class="cert-card">
+        <div class="cert-header">
+          <div><div class="cert-name">${cert.name}</div><div class="cert-timeline">${cert.timeline}</div></div>
+          <div class="cert-pct" style="color:var(--${cert.color}-dark);">${pct}%</div>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar ${barClass}" style="width:${pct}%"></div></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;">${done} of ${total} study tasks completed</div>
+      </div>`;
+    }).join('');
+  };
+  renderLadder(CERTS_A, TASKS_A, 'cert-ladder-a', 'bar-sky');
+  renderLadder(CERTS_B, TASKS_B, 'cert-ladder-b', 'bar-lavender');
+}
+
+function renderMilestones() {
+  const el = document.getElementById('milestones-list');
+  el.innerHTML = MILESTONES.map(m => {
+    let achieved = false;
+    if (m.key === 'first_task') achieved = state.completedTasks.length >= 1;
+    else if (m.key === 'streak_3') achieved = state.bestStreak >= 3;
+    else if (m.key === 'xp_100') achieved = state.totalXP >= 100;
+    else if (m.key === 'first_lab') {
+      const allTasks = [...Object.values(TASKS_A).flatMap(p=>p.tasks), ...Object.values(TASKS_B).flatMap(p=>p.tasks)];
+      achieved = state.completedTasks.some(id => { const t = allTasks.find(x=>x.id===id); return t&&t.type==='lab'; });
+    }
+    else if (m.key === 'streak_7') achieved = state.bestStreak >= 7;
+    else if (m.key === 'xp_500') achieved = state.totalXP >= 500;
+    else if (m.key === 'phase1_done') {
+      const a1 = TASKS_A.phase1.tasks.every(t => state.completedTasks.includes(t.id));
+      const b1 = TASKS_B.phase1.tasks.every(t => state.completedTasks.includes(t.id));
+      achieved = a1 || b1;
+    }
+    else if (m.key === 'xp_1000') achieved = state.totalXP >= 1000;
+    return `<div class="milestone-row">
+      <div class="milestone-icon" style="background:${achieved?'var(--mint)':'var(--bg)'};">${m.icon}</div>
+      <div class="milestone-info">
+        <div class="milestone-name">${m.name}</div>
+        <div class="milestone-desc">${m.desc}</div>
+      </div>
+      <div class="milestone-status ${achieved?'ms-done':'ms-pending'}">${achieved?'✓ Earned':'Locked'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLeaderboard() {
+  const d = new Date();
+  document.getElementById('lb-period').textContent = d.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  document.getElementById('invite-code').textContent = state.groupCode || 'ITT-' + Math.random().toString(36).substr(2,6).toUpperCase();
+
+  const sampleUsers = [
+    { name:'Ahmed K', xp:820, streak:14, path:'Both', avatarIdx:2 },
+    { name:'Sara M', xp:610, streak:9, path:'Path B', avatarIdx:4 },
+    { name:'David O', xp:440, streak:6, path:'Path A', avatarIdx:0 },
+  ];
+
+  const meEntry = { name:state.name, xp:state.totalXP, streak:state.streak, path:state.paths.length>1?'Both':state.paths[0]==='a'?'Path A':'Path B', isMe:true, avatarIdx:state.avatarColor };
+  let allUsers = [...sampleUsers, meEntry].sort((a,b)=>b.xp-a.xp);
+  const rankColors = ['rank-1','rank-2','rank-3'];
+  const el = document.getElementById('leaderboard-list');
+  el.innerHTML = allUsers.map((u, i) => {
+    const colors = AVATARCOLORS[u.avatarIdx||0];
+    const rankClass = i < 3 ? rankColors[i] : 'rank-other';
+    return `<div class="lb-row">
+      <div class="lb-rank ${rankClass}">${i+1}</div>
+      <div class="lb-avatar" style="background:${colors[0]};color:${colors[1]};">${getInitials(u.name)}</div>
+      <div class="lb-info">
+        <div class="lb-name">${u.name}${u.isMe?`<span class="lb-badge-you">You</span>`:''}</div>
+        <div class="lb-detail">${u.path} • 🔥 ${u.streak}-day streak</div>
+      </div>
+      <div class="lb-xp">${u.xp} XP</div>
+    </div>`;
+  }).join('');
+}
+
+function renderRoadmap() {
+  const levelColors = { Beginner:'mint', Developing:'sky', Intermediate:'lemon', Advanced:'peach' };
+  document.getElementById('roadmap-phases').innerHTML = PHASES_ROADMAP.map((p,i) => {
+    const lc = levelColors[p.level];
+    return `<div style="display:flex;gap:16px;margin-bottom:24px;">
+      <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--${lc});color:var(--${lc}-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid var(--${lc}-mid);">${i+1}</div>
+        ${i<PHASES_ROADMAP.length-1?`<div style="width:2px;flex:1;min-height:40px;background:var(--border);margin:6px 0;"></div>`:''}
+      </div>
+      <div class="card" style="flex:1;margin-bottom:0;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+          <div>
+            <div style="font-family:var(--serif);font-size:18px;color:var(--ink);">${p.phase} — ${p.period}</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:2px;">${p.tagline}</div>
+          </div>
+          <span class="badge badge-${lc}" style="font-size:11px;padding:4px 10px;">${p.level}</span>
+        </div>
+        <p style="font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px;">${p.desc}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div style="background:var(--sky);border-radius:8px;padding:12px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--sky-dark);margin-bottom:4px;">☁️ Path A</div>
+            <div style="font-size:12px;color:var(--sky-dark);line-height:1.5;">${p.pathA}</div>
+          </div>
+          <div style="background:var(--lavender);border-radius:8px;padding:12px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--lavender-dark);margin-bottom:4px;">🛡️ Path B</div>
+            <div style="font-size:12px;color:var(--lavender-dark);line-height:1.5;">${p.pathB}</div>
+          </div>
+        </div>
+        <div style="background:var(--lemon);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--lemon-dark);">💡 ${p.tip}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderNotes() {
+  const allTasks = [...Object.values(TASKS_A).flatMap(p=>p.tasks), ...Object.values(TASKS_B).flatMap(p=>p.tasks)];
+  const notes = state.taskNotes || {};
+  const tasksWithNotes = allTasks.filter(t => notes[t.id] && notes[t.id].trim().length > 0);
+  const el = document.getElementById('notes-review-list');
+  if (tasksWithNotes.length === 0) {
+    el.innerHTML = `<div class="card" style="text-align:center;padding:32px;color:var(--muted);">
+      <div style="font-size:32px;margin-bottom:10px;">📭</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:6px;">No notes yet</div>
+      <div style="font-size:13px;">Head to Today's Tasks, complete some activities, and use the notes box under each task to capture what you learn.</div>
+    </div>`;
+  } else {
+    const pathAIds = Object.values(TASKS_A).flatMap(p=>p.tasks).map(t=>t.id);
+    el.innerHTML = `<div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">${tasksWithNotes.length} note${tasksWithNotes.length>1?'s':''} saved</div>` +
+    tasksWithNotes.map(t => {
+      const isA = pathAIds.includes(t.id);
+      const col = isA ? 'sky' : 'lavender';
+      const label = isA ? '☁️ Path A' : '🛡️ Path B';
+      return `<div class="card" style="margin-bottom:12px;border-left:3px solid var(--${col}-mid);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+          <span class="badge badge-${col}">${label}</span>
+          <span style="font-size:13px;font-weight:500;color:var(--ink);">${t.title}</span>
+        </div>
+        <div style="background:var(--${col});border-radius:var(--r-sm);padding:12px;font-size:13px;color:var(--${col}-dark);line-height:1.6;white-space:pre-wrap;">${notes[t.id]}</div>
+        <button class="task-notes-toggle" style="margin-top:8px;" onclick="showPage('tasks')">Edit in tasks →</button>
+      </div>`;
+    }).join('');
+  }
+  const revisitEl = document.getElementById('global-revisit-notes');
+  if (revisitEl) revisitEl.value = state.revisitNotes || '';
+}
+
+let revisitTimer;
+function saveRevisitNotes() {
+  clearTimeout(revisitTimer);
+  revisitTimer = setTimeout(() => {
+    const el = document.getElementById('global-revisit-notes');
+    if (el) { state.revisitNotes = el.value; saveState(); }
+    const saved = document.getElementById('revisit-saved');
+    if (saved) { saved.style.display='inline'; setTimeout(()=>{saved.style.display='none';},2000); }
+  }, 800);
+}
+
+function toggleNotes(taskId) {
+  const box = document.getElementById('notes-box-' + taskId);
+  if (!box) return;
+  box.classList.toggle('open');
+  if (box.classList.contains('open')) {
+    const ta = document.getElementById('notes-ta-' + taskId);
+    if (ta) setTimeout(() => ta.focus(), 50);
+  }
+}
+
+let noteSaveTimers = {};
+function autoSaveNote(taskId) {
+  clearTimeout(noteSaveTimers[taskId]);
+  noteSaveTimers[taskId] = setTimeout(() => {
+    const ta = document.getElementById('notes-ta-' + taskId);
+    if (!ta) return;
+    if (!state.taskNotes) state.taskNotes = {};
+    state.taskNotes[taskId] = ta.value;
+    saveState();
+    const saved = document.getElementById('notes-saved-' + taskId);
+    if (saved) {
+      saved.style.display = 'inline';
+      setTimeout(() => { saved.style.display = 'none'; }, 2000);
+    }
+    const toggle = document.querySelector(`#task-wrap-${taskId} .task-notes-toggle`);
+    if (toggle) toggle.textContent = ta.value.length > 0 ? '📝 View / edit your notes' : '+ Add notes';
+  }, 800);
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const names = ['dashboard','tasks','progress','leaderboard','roadmap','notes'];
+  tabs[names.indexOf(name)]?.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'tasks') renderTasks();
+  if (name === 'progress') renderProgress();
+  if (name === 'leaderboard') renderLeaderboard();
+  if (name === 'notes') renderNotes();
+}
+
+function showModal(id) {
+  if (id === 'profile-modal') document.getElementById('profile-name-input').value = state.name;
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function saveProfile() {
+  const n = document.getElementById('profile-name-input').value.trim();
+  if (n) { state.name = n; saveState(); renderNav(); renderDashboard(); }
+  closeModal('profile-modal');
+}
+
+function copyInviteCode() {
+  const code = document.getElementById('invite-code').textContent;
+  navigator.clipboard?.writeText(code).catch(()=>{});
+  showDoneModal('🔗', 'Code copied!', `Share "${code}" with your colleagues so they can join your leaderboard!`);
+}
+
+function joinGroup() {
+  const code = document.getElementById('join-code-input').value.trim().toUpperCase();
+  if (!code.startsWith('ITT-')) { alert('Please enter a valid ITTracker invite code (starts with ITT-)'); return; }
+  state.joinedGroup = code;
+  saveState();
+  closeModal('join-modal');
+  showDoneModal('🤝', 'Group joined!', `You've joined group ${code}! You'll now appear on their leaderboard.`);
+  renderLeaderboard();
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+window.addEventListener('load', () => {
+  if (loadState() && state.name) {
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'block';
+    initApp();
+  }
+});
+</script>
+</body>
+</html>
